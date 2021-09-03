@@ -23,11 +23,13 @@ function validateProject(req, res, next){
     const { name, description } = req.body
     if(!name || !description){
         res.status(400).json({
-            message: 'Missing required name field'
+            message: 'Missing required name or description field'
         })
     } else{
-        req.name = name.trim()
-        req.description = description.trim()
+       Project.insert({name, description})
+       .then(({ id }) =>{
+           return Project.get(id)
+       })
         next()
     }
 }

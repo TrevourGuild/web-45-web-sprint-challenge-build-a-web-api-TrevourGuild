@@ -21,13 +21,7 @@ router.get('/:id', validateProjectId,(req, res, next) =>{
 })
 
 router.post('/', validateProject, (req, res, next) =>{
-    Project.insert({ 
-        name: req.name,
-        description: req.description 
-    })
-    .then(newProject =>{
-        res.status(201).json(newProject)
-    })
+    res.status(201).json(req.project)
     .catch(next)
 })
 
@@ -55,9 +49,21 @@ router.delete('/:id', validateProjectId, async (req, res, next) =>{
     
 })
 
-router.get('/:id/actions', validateProjectId,(req, res, next) =>{
-    res.json(req.actions)
-    .catch(next)
+router.get('/:id/actions', async (req, res, next) =>{
+    try{
+        const action = await Project.get(req.params.id)
+        if(!action){
+            res.status(404).json({
+                message: 'the action with the specified id does not exist'
+            })
+        } else{
+            const messages = await Project.getProjectActions(req.params.id)
+            res.json(messages)
+        }
+    } catch (err){
+        next(err)
+    }
+    
 })
 
 router.use((err, req, res, next) =>{ //eslint-disable-line
