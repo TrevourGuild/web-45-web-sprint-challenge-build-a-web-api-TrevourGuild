@@ -2,35 +2,52 @@
 const express = require('express')
 
 
-// const Action = require('./actions-model')
+const { validateActionId, validateAction } = require('./actions-middlware')
+
+
+const Action = require('./actions-model')
 
 const router = express.Router()
 
 router.get('/', (req, res, next) =>{
-    res.json('array of actions')
+    Action.get()
+    .then(actions =>{
+        res.json(actions)
+    })
     .catch(next)
 })
 
-router.get('/:id', (req, res, next) =>{
-    res.json('action id object')
+router.get('/:id', validateActionId, (req, res, next) =>{
+    res.json(req.action)
     .catch(next)
 })
 
-router.post('/', (req, res, next) =>{
-    
-    res.json('new action')
+router.post('/', validateAction, (req, res, next) => {
+    Action.insert({ notes: req.notes })
+    .then(newNote =>{
+        res.status(201).json(newNote)
+    })
     .catch(next)
 })
 
-router.put('/:id', (req, res, next) =>{
-   
-    res.json('update action')
+router.put('/:id', validateActionId, validateAction,(req, res, next) =>{
+    Action.update(req.params.id, {notes: req.notes})
+    .then(()=>{
+        return Action.get(req.params.id)
+    })
+    .then(action =>{
+        res.json(action)
+    })
     .catch(next)
 })
 
-router.delete('/:id', (req, res, next) =>{
-    res.json('delete action')
-    .catch(next)
+router.delete('/:id', validateActionId, async (req, res, next) =>{
+    try{
+        await Action.remove(req.params.id)
+        res.json(req.action)
+    } catch (err){
+        next(err)
+    }
 })
 
 router.use((err, req, res, next) =>{ //eslint-disable-line

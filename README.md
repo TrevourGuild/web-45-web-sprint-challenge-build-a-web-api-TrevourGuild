@@ -147,7 +147,12 @@ We have provided test data for all the resources.
 Be prepared to demonstrate your understanding of this week's concepts by answering questions on the following topics. You might prepare by writing down your own answers before hand.
 
 1. The core features of Node.js and Express and why they are useful.
+The core features are important and useful because they allow programmers to see what is going on under the hood.
 1. Understand and explain the use of Middleware.
+middleware is used to clean up the router code and to better organize code 
 1. The basic principles of the REST architectural style.
+representational state transfer is the use of client server, stateless, cachable, uniform interface, and layerd system code.
 1. Understand and explain the use of Express Routers.
+express routers allow the server not to be flooded with code and it helps clean it up 
 1. Describe tooling used to manually test the correctness of an API.
+tooling is great because it auto corrects code and helps get the best results.
