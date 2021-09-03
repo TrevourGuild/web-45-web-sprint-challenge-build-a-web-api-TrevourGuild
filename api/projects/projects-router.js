@@ -1,6 +1,6 @@
 // Write your "projects" router here!
 const express = require('express')
-const { validateProjectId } = require('./projects-middleware')
+const { validateProjectId, validateProject } = require('./projects-middleware')
 
 
 const Project = require('./projects-model')
@@ -20,17 +20,30 @@ router.get('/:id', validateProjectId,(req, res, next) =>{
     .catch(next)
 })
 
-router.post('/', (req, res, next) =>{
-    
-    res.json('new project')
+router.post('/', validateProject, (req, res, next) =>{
+    Project.insert({ 
+        name: req.name,
+        description: req.description 
+    })
+    .then(newProject =>{
+        res.status(201).json(newProject)
+    })
     .catch(next)
 })
 
-router.put('/:id', (req, res, next) =>{
-   
-    res.json('update project')
+router.put('/:id', validateProjectId, validateProject,(req, res, next) =>{
+    Project.update(req.params.id, { 
+    name: req.name, 
+    description: req.description
+    })
+    .then(()=>{
+        return Project.get(req.params.id)
+    })
+    .then(project =>{
+        res.json(project)
+    })
     .catch(next)
-})
+    })
 
 router.delete('/:id', validateProjectId, async (req, res, next) =>{
     try{
@@ -42,8 +55,8 @@ router.delete('/:id', validateProjectId, async (req, res, next) =>{
     
 })
 
-router.get('/:id/actions', (req, res, next) =>{
-    res.json('array of actions by id')
+router.get('/:id/actions', validateProjectId,(req, res, next) =>{
+    res.json(req.actions)
     .catch(next)
 })
 
